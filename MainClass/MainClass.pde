@@ -4,15 +4,17 @@ import ddf.minim.analysis.*;
 Minim minim;
 AudioPlayer player1;
 AudioPlayer player2;
+AudioPlayer player3;
+AudioPlayer player;
 AudioMetaData meta;
 BeatDetect beat;
-int  r = 200;
+int  r = 270;
 float rad = 100;
-enum ColorScheme{
-  BLUE, GREEN, YELLOW, PINK
-};
+PFont font1;
+boolean pause = false;
 
-ColorScheme colorFlag = BLUE;
+int song = 1;
+int colorFlag = 1;
 
 void setup()
 {
@@ -21,55 +23,140 @@ void setup()
   minim = new Minim(this);
   player1 = minim.loadFile("RobinSchulz-Headlights.mp3");
   player2 = minim.loadFile("MilkyChance-FlashedJunkMind.mp3");
+  player3 = minim.loadFile("TheHangingTree-RebelRemix.mp3");
   
-  meta = player1.getMetaData();
+  player = player1;
+  
+  //loading and setting the font
+  font1 = loadFont("ARBONNIE-150.vlw");
+  textFont(font1);
+  
+  meta = player.getMetaData();
   beat = new BeatDetect();
   //player1.loop();
-  player1.play();
+  player.play();
   background(-1);
   noCursor();
 }
  
 void draw()
 { 
-  float t = map(mouseX, 0, width, 0, 1);
-  beat.detect(player1.mix);
-  if(colorFlag == GREEN){
-    fill(#444444, 20);
+  
+  if (song == 2){
+    player.pause();
+    player = player2;
+    
+    meta = player.getMetaData();
+    beat = new BeatDetect();
+    //player1.loop();    
+    player.play();   
   }
-  else if(colorFlag == YELLOW){
-    fill(#223300, 20);
-  }
-  else if(colorFlag == PINK){
-    fill(#112210, 20);
+  else if (song == 3){
+    player.pause();
+    player = player3;
+    
+    meta = player.getMetaData();
+    beat = new BeatDetect();
+    //player1.loop();
+    //player.rewind();
+    player.play();  
   }
   else {
-    fill(#7B9DFE, 20);
+    player.pause();
+    player = player1;
+    
+    meta = player.getMetaData();
+    beat = new BeatDetect();
+    //player1.loop();
+    //player.rewind();
+    player.play();  
+  }
+  
+  if (pause){
+    player.pause();
+  }
+  
+  //menu
+  if (nameFlag){
+    pushMatrix();
+    fill(#FFFFFF, 30);
+    textSize(50);
+    textAlign(LEFT);
+    noStroke();
+    
+    if(dist(mouseX, mouseY, 50, height/2 - 180)<100){
+      fill(#FFFFFF);
+    }
+    translate(50, height/2 - 180);
+    ellipse(0, 0, 30, 30);
+      pushMatrix();
+      translate(30, 15);
+      text("Song 1", 0, 0);
+      popMatrix();  
+      fill(#FFFFFF, 30);
+      
+    if(dist(mouseX, mouseY, 50, height/2 - 80)<100){
+      fill(#FFFFFF);
+    }
+    translate(0, 100);
+    ellipse(0, 0, 30, 30);
+       pushMatrix();
+      translate(30, 15);
+      text("Song 2", 0, 0);
+      popMatrix();
+      fill(#FFFFFF, 30);
+      
+    if(dist(mouseX, mouseY, 50, height/2 + 20)<100){
+      fill(#FFFFFF);
+    }
+    translate(0, 100);
+    ellipse(0, 0, 30, 30);
+      pushMatrix();
+      translate(30, 15);
+      text("Song 3", 0, 0);
+      popMatrix();
+      fill(#FFFFFF, 30);
+    popMatrix();
+  }
+  
+  pushMatrix();
+  float t = map(mouseX, 0, width, 0, 1);
+  beat.detect(player.mix);
+  if(colorFlag == 2){
+    fill(#AADD39, 20); //green
+  }
+  else if(colorFlag == 3){ //pink
+    fill(#DA3C5E, 20);
+  }
+  else if(colorFlag == 4){
+    fill(#EAAF2E, 20);
+  }
+  else {
+    fill(#1693A5, 20);
   }
   
   
   noStroke();
   rect(0, 0, width, height);
   translate(width/2, height/2);
-  //noFill();
   fill(#FFFFFF, 30);
   if (beat.isOnset()) {
-    rad = rad*0.9;
+    rad = rad*0.8;
   }
   else {
     rad = 100;
   }
   ellipse(0, 0, 3*rad, 3*rad);
   stroke(#FFFFFF, 50);
-  int bsize = player1.bufferSize();
+  int bsize = player.bufferSize();
   
   float x, y, x2, y2;
   for (int i = 0; i < bsize - 1; i+=5)
   {
     x = (r)*cos(i*2*PI/bsize);
     y = (r)*sin(i*2*PI/bsize);
-    x2 = (r + player1.left.get(i)*100)*cos(i*2*PI/bsize);
-    y2 = (r + player1.left.get(i)*100)*sin(i*2*PI/bsize);
+    x2 = (r + player.left.get(i)*100)*cos(i*2*PI/bsize);
+    y2 = (r + player.left.get(i)*100)*sin(i*2*PI/bsize);
     line(x, y, x2, y2);
   }
   beginShape();
@@ -77,8 +164,8 @@ void draw()
   stroke(-1, 50);
   for (int i = 0; i < bsize; i+=30)
   {
-    x2 = (r + player1.left.get(i)*100)*cos(i*2*PI/bsize);
-    y2 = (r + player1.left.get(i)*100)*sin(i*2*PI/bsize);
+    x2 = (r + player.left.get(i)*100)*cos(i*2*PI/bsize);
+    y2 = (r + player.left.get(i)*100)*sin(i*2*PI/bsize);
     vertex(x2, y2);
     pushStyle();
     stroke(-1);
@@ -87,11 +174,20 @@ void draw()
     popStyle();
   }
   endShape();
+  
+  
    if (timeFlag) showTime();
    if (nameFlag) {
-     fill(#FFFFFF, 50);
+ 
+     translate(0, -400);
      showName();
+     cursor();
    }
+   else{
+     noCursor();
+   }
+   popMatrix();
+   showAuthor();
   
   
 }
@@ -105,7 +201,7 @@ void showTime() {
 }
 
 void showName() {
-  fill(#7B9DFE, 10);
+  fill(#FFFFFF, 30);
   String title =  meta.title();
   if (title == null){
       title = "Unknown title";
@@ -120,7 +216,12 @@ void showName() {
   //fill(#7B9DFE, 30);
 }
 
-
+void showAuthor(){
+  fill(#FFFFFF, 30);
+  textSize(50);
+  textAlign(RIGHT);
+  text("Created by Markéta Hanušová", width-20, height-20);
+}
  
 boolean timeFlag =false;
 boolean nameFlag =false;
@@ -128,7 +229,18 @@ void mousePressed() {
   if (dist(mouseX, mouseY, width/2, height/2)<150) {
     timeFlag =!timeFlag;
   }
-  nameFlag = !nameFlag;
+  if (!(dist(mouseX, mouseY, 50, height/2 - 180)<100) && !(dist(mouseX, mouseY, 50, height/2 - 80)<100) && !(dist(mouseX, mouseY, 50, height/2 + 20)<100) ){
+    nameFlag = !nameFlag;
+  }
+  if(dist(mouseX, mouseY, 50, height/2 - 180)<100){  //song1
+        song = 1;
+   }
+  if(dist(mouseX, mouseY, 50, height/2 - 80)<100){
+        song = 2;
+   }
+  if(dist(mouseX, mouseY, 50, height/2 + 20)<100){
+        song = 3;
+   }
 }
  
 boolean sketchFullScreen() {
@@ -137,9 +249,10 @@ boolean sketchFullScreen() {
  
 void keyPressed() {
   if(key==' ')exit();
+  if(key=='p')pause = !pause;
   if(key=='s')saveFrame("###.jpeg");
-  if(key=='1')colorFlag = BLUE;
-  if(key=='2')colorFlag = GREEN;
-  if(key=='3')colorFlag = YELLOW;
-  if(key=='4')colorFlag = PINK;
+  if(key=='1')colorFlag = 1; //blue
+  if(key=='2')colorFlag = 2; //green
+  if(key=='3')colorFlag = 3; //yellow
+  if(key=='4')colorFlag = 4; //pink
 }
