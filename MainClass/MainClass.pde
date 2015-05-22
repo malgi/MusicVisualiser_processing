@@ -3,16 +3,25 @@ import ddf.minim.analysis.*;
  
 Minim minim;
 AudioPlayer player1;
+AudioPlayer player2;
 AudioMetaData meta;
 BeatDetect beat;
 int  r = 200;
 float rad = 100;
+enum ColorScheme{
+  BLUE, GREEN, YELLOW, PINK
+};
+
+ColorScheme colorFlag = BLUE;
+
 void setup()
 {
   size(displayWidth, displayHeight);
   //size(600, 400);
   minim = new Minim(this);
   player1 = minim.loadFile("RobinSchulz-Headlights.mp3");
+  player2 = minim.loadFile("MilkyChance-FlashedJunkMind.mp3");
+  
   meta = player1.getMetaData();
   beat = new BeatDetect();
   //player1.loop();
@@ -25,7 +34,20 @@ void draw()
 { 
   float t = map(mouseX, 0, width, 0, 1);
   beat.detect(player1.mix);
-  fill(#7B9DFE, 20);
+  if(colorFlag == GREEN){
+    fill(#444444, 20);
+  }
+  else if(colorFlag == YELLOW){
+    fill(#223300, 20);
+  }
+  else if(colorFlag == PINK){
+    fill(#112210, 20);
+  }
+  else {
+    fill(#7B9DFE, 20);
+  }
+  
+  
   noStroke();
   rect(0, 0, width, height);
   translate(width/2, height/2);
@@ -97,6 +119,8 @@ void showName() {
   text(author + " - " + title, -7, 21 );
   //fill(#7B9DFE, 30);
 }
+
+
  
 boolean timeFlag =false;
 boolean nameFlag =false;
@@ -114,5 +138,8 @@ boolean sketchFullScreen() {
 void keyPressed() {
   if(key==' ')exit();
   if(key=='s')saveFrame("###.jpeg");
-  if(key=='a');
+  if(key=='1')colorFlag = BLUE;
+  if(key=='2')colorFlag = GREEN;
+  if(key=='3')colorFlag = YELLOW;
+  if(key=='4')colorFlag = PINK;
 }
