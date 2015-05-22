@@ -2,21 +2,21 @@ import ddf.minim.*;
 import ddf.minim.analysis.*;
  
 Minim minim;
-AudioPlayer player;
+AudioPlayer player1;
 AudioMetaData meta;
 BeatDetect beat;
 int  r = 200;
-float rad = 70;
+float rad = 100;
 void setup()
 {
   size(displayWidth, displayHeight);
   //size(600, 400);
   minim = new Minim(this);
-  player = minim.loadFile("song.mp3");
-  meta = player.getMetaData();
+  player1 = minim.loadFile("RobinSchulz-Headlights.mp3");
+  meta = player1.getMetaData();
   beat = new BeatDetect();
-  player.loop();
-  //player.play();
+  //player1.loop();
+  player1.play();
   background(-1);
   noCursor();
 }
@@ -24,24 +24,30 @@ void setup()
 void draw()
 { 
   float t = map(mouseX, 0, width, 0, 1);
-  beat.detect(player.mix);
-  fill(#1A1F18, 20);
+  beat.detect(player1.mix);
+  fill(#7B9DFE, 20);
   noStroke();
   rect(0, 0, width, height);
   translate(width/2, height/2);
-  noFill();
-  fill(-1, 10);
-  if (beat.isOnset()) rad = rad*0.9;
-  else rad = 70;
-  ellipse(0, 0, 2*rad, 2*rad);
-  stroke(-1, 50);
-  int bsize = player.bufferSize();
+  //noFill();
+  fill(#FFFFFF, 30);
+  if (beat.isOnset()) {
+    rad = rad*0.9;
+  }
+  else {
+    rad = 100;
+  }
+  ellipse(0, 0, 3*rad, 3*rad);
+  stroke(#FFFFFF, 50);
+  int bsize = player1.bufferSize();
+  
+  float x, y, x2, y2;
   for (int i = 0; i < bsize - 1; i+=5)
   {
-    float x = (r)*cos(i*2*PI/bsize);
-    float y = (r)*sin(i*2*PI/bsize);
-    float x2 = (r + player.left.get(i)*100)*cos(i*2*PI/bsize);
-    float y2 = (r + player.left.get(i)*100)*sin(i*2*PI/bsize);
+    x = (r)*cos(i*2*PI/bsize);
+    y = (r)*sin(i*2*PI/bsize);
+    x2 = (r + player1.left.get(i)*100)*cos(i*2*PI/bsize);
+    y2 = (r + player1.left.get(i)*100)*sin(i*2*PI/bsize);
     line(x, y, x2, y2);
   }
   beginShape();
@@ -49,33 +55,58 @@ void draw()
   stroke(-1, 50);
   for (int i = 0; i < bsize; i+=30)
   {
-    float x2 = (r + player.left.get(i)*100)*cos(i*2*PI/bsize);
-    float y2 = (r + player.left.get(i)*100)*sin(i*2*PI/bsize);
+    x2 = (r + player1.left.get(i)*100)*cos(i*2*PI/bsize);
+    y2 = (r + player1.left.get(i)*100)*sin(i*2*PI/bsize);
     vertex(x2, y2);
     pushStyle();
     stroke(-1);
-    strokeWeight(2);
+    strokeWeight(4);
     point(x2, y2);
     popStyle();
   }
   endShape();
-   if (flag) showMeta();
+   if (timeFlag) showTime();
+   if (nameFlag) {
+     fill(#FFFFFF, 50);
+     showName();
+   }
+  
+  
 }
  
  
-void showMeta() {
+void showTime() {
   int time =  meta.length();
   textSize(50);
   textAlign(CENTER);
   text( (int)(time/1000-millis()/1000)/60 + ":"+ (time/1000-millis()/1000)%60, -7, 21);
 }
- 
-boolean flag =false;
-void mousePressed() {
-  if (dist(mouseX, mouseY, width/2, height/2)<150) flag =!flag;
+
+void showName() {
+  fill(#7B9DFE, 10);
+  String title =  meta.title();
+  if (title == null){
+      title = "Unknown title";
+  }  
+  String author =  meta.author();
+  if (title == null){
+      title = "Unknown interpret";
+  }
+  textSize(150);
+  textAlign(CENTER);
+  text(author + " - " + title, -7, 21 );
+  //fill(#7B9DFE, 30);
 }
  
-//
+boolean timeFlag =false;
+boolean nameFlag =false;
+void mousePressed() {
+  if (dist(mouseX, mouseY, width/2, height/2)<150) {
+    timeFlag =!timeFlag;
+  }
+  nameFlag = !nameFlag;
+}
+ 
 boolean sketchFullScreen() {
   return true;
 }
@@ -83,4 +114,5 @@ boolean sketchFullScreen() {
 void keyPressed() {
   if(key==' ')exit();
   if(key=='s')saveFrame("###.jpeg");
+  if(key=='a');
 }
