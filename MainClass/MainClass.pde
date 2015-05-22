@@ -250,7 +250,6 @@ boolean sketchFullScreen() {
 void keyPressed() {
   if(key==' ')exit();
   if(key=='p')pause = !pause;
-  if(key=='s')saveFrame("###.jpeg");
   if(key=='1')colorFlag = 1; //blue
   if(key=='2')colorFlag = 2; //green
   if(key=='3')colorFlag = 3; //yellow
