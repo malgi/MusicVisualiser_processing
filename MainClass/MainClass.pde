@@ -228,7 +228,7 @@ void draw()
    if (timeFlag) showTime();
    if (nameFlag) {
  
-     translate(0, -400);
+     translate(0, -height/2 + 120);
      showName();
      cursor();
    }
