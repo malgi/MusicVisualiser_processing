@@ -34,3 +34,5 @@ space key press			-	exit application
 '4' key press			-	yellow color theme
 'UP' arrow key press		-	switch the visualizing style
 'DOWN' arrow key press		-	switch the visualizing style
+
+recomended resolution: 1920 x 1080
