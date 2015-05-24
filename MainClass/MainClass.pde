@@ -223,8 +223,7 @@ void draw()
     point(x2, y2);
     popStyle();
   }
-  endShape();
-  
+  endShape();  
   
    if (timeFlag) showTime();
    if (nameFlag) {
@@ -272,7 +271,7 @@ void showAuthor(){
 }
  
 boolean timeFlag =false;
-boolean nameFlag =false;
+boolean nameFlag =true;
 void mousePressed() {
   if (dist(mouseX, mouseY, width/2, height/2)<150) {
     timeFlag =!timeFlag;

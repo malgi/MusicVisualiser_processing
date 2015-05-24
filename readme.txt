@@ -3,10 +3,22 @@ PV251 project
 -----------------
 Markéta Hanušová
 
-Application visualize a loaded music using a special curves and circle.
-There is 3 deafult songs for choice. App also has 4 various color themes.
-For managing an mp3 files was used Minim audio library (Java). Visualizer
-processes beats and loaded metadata.
+Application for visualizing music in mp3 format.
+
+The application visualize loaded music. For the school project purpose I have loaded
+three default songs (which is enough for demonstration of how the visualizing works).
+You can switch between the songs in menu. If you are not satisfied with the songs 
+choice, feel free to replace the songs in drectory (just keep old names).
+
+You are also able to customize the music visualizer environment and style. Firstly
+just click with your mouse to hide the text and enjoy just the pure visualiztion.
+There is 4 different color themes for choice and 3 different styles of visualizing.
+More about changing styles and controling in "CONTROL" section.
+
+The application was programmed in Processing language. For managing an mp3 files
+was used Minim audio library (Java). The visualizer processes data from audio
+buffer and detects beats in music. Moreover it gets meta data from mp3 file to
+show the title of the song and reamining time.   
 
 
 CONTROL:
@@ -20,3 +32,5 @@ space key press			-	exit application
 '2' key press			-	green color theme
 '3' key press			-	pink color theme
 '4' key press			-	yellow color theme
+'UP' arrow key press		-	switch the visualizing style
+'DOWN' arrow key press		-	switch the visualizing style
