@@ -13,8 +13,13 @@ float rad = 100;
 PFont font1;
 boolean pause = false;
 
-int song = 1;
+int song = 0;
 int colorFlag = 1;
+int visualFlag = 0;
+
+// visualization properties
+int pointSize = 4;
+int density = 5;
 
 void setup()
 {
@@ -33,7 +38,7 @@ void setup()
   
   meta = player.getMetaData();
   beat = new BeatDetect();
-  //player1.loop();
+  //player.loop();
   player.play();
   background(-1);
   noCursor();
@@ -41,39 +46,48 @@ void setup()
  
 void draw()
 { 
-  
+  //choosing music
   if (song == 2){
+    song = 0;
     player.pause();
+    player.rewind();
     player = player2;
     
     meta = player.getMetaData();
     beat = new BeatDetect();
-    //player1.loop();    
+    //player.loop();    
     player.play();   
   }
   else if (song == 3){
+    song = 0;
     player.pause();
     player = player3;
     
     meta = player.getMetaData();
     beat = new BeatDetect();
-    //player1.loop();
+    //player.loop();
     //player.rewind();
     player.play();  
   }
-  else {
+  else if (song == 1) {
+    song = 0;
     player.pause();
     player = player1;
     
     meta = player.getMetaData();
     beat = new BeatDetect();
-    //player1.loop();
+    //player.loop();
     //player.rewind();
     player.play();  
   }
   
   if (pause){
     player.pause();
+  }
+  
+  if (!pause && !(player.isPlaying())){
+    player.rewind();
+    player.play();
   }
   
   //menu
@@ -119,6 +133,23 @@ void draw()
     popMatrix();
   }
   
+  //choosing visualization style
+  
+  if (visualFlag == 0){
+    pointSize = 4;
+    density = 5;
+    
+  }else if(visualFlag == 1){
+    pointSize = 10;
+    density = 1;
+  
+  }else if(visualFlag == 2){
+  
+  }else{
+  
+  }
+  
+  
   pushMatrix();
   float t = map(mouseX, 0, width, 0, 1);
   beat.detect(player.mix);
@@ -128,11 +159,11 @@ void draw()
   else if(colorFlag == 3){ //pink
     fill(#DA3C5E, 20);
   }
-  else if(colorFlag == 4){
+  else if(colorFlag == 4){ //yellow
     fill(#EAAF2E, 20);
   }
   else {
-    fill(#1693A5, 20);
+    fill(#1693A5, 20);  //blue
   }
   
   
@@ -142,16 +173,19 @@ void draw()
   fill(#FFFFFF, 30);
   if (beat.isOnset()) {
     rad = rad*0.8;
+    r = 310;
   }
   else {
     rad = 100;
+    r = 270;
   }
+  
   ellipse(0, 0, 3*rad, 3*rad);
-  stroke(#FFFFFF, 50);
+  stroke(#FFFFFF, 30);
   int bsize = player.bufferSize();
   
   float x, y, x2, y2;
-  for (int i = 0; i < bsize - 1; i+=5)
+  for (int i = 0; i < bsize - 1; i+= density)
   {
     x = (r)*cos(i*2*PI/bsize);
     y = (r)*sin(i*2*PI/bsize);
@@ -162,14 +196,14 @@ void draw()
   beginShape();
   noFill();
   stroke(-1, 50);
-  for (int i = 0; i < bsize; i+=30)
+  for (int i = 0; i < bsize; i+= 10)
   {
     x2 = (r + player.left.get(i)*100)*cos(i*2*PI/bsize);
     y2 = (r + player.left.get(i)*100)*sin(i*2*PI/bsize);
     vertex(x2, y2);
     pushStyle();
     stroke(-1);
-    strokeWeight(4);
+    strokeWeight(pointSize);
     point(x2, y2);
     popStyle();
   }
@@ -187,9 +221,7 @@ void draw()
      noCursor();
    }
    popMatrix();
-   showAuthor();
-  
-  
+   showAuthor();   
 }
  
  
@@ -229,7 +261,7 @@ void mousePressed() {
   if (dist(mouseX, mouseY, width/2, height/2)<150) {
     timeFlag =!timeFlag;
   }
-  if (!(dist(mouseX, mouseY, 50, height/2 - 180)<100) && !(dist(mouseX, mouseY, 50, height/2 - 80)<100) && !(dist(mouseX, mouseY, 50, height/2 + 20)<100) ){
+  if (!(dist(mouseX, mouseY, 50, height/2 - 180)<100) && !(dist(mouseX, mouseY, 50, height/2 - 80)<100) && !(dist(mouseX, mouseY, 50, height/2 + 20)<100) && !(dist(mouseX, mouseY, width/2, height/2)<150) ){
     nameFlag = !nameFlag;
   }
   if(dist(mouseX, mouseY, 50, height/2 - 180)<100){  //song1
@@ -254,4 +286,22 @@ void keyPressed() {
   if(key=='2')colorFlag = 2; //green
   if(key=='3')colorFlag = 3; //yellow
   if(key=='4')colorFlag = 4; //pink
+    if (key == CODED) {
+      if (keyCode == UP) {
+        if (visualFlag < 3){
+          visualFlag++;
+        } 
+         else{
+           visualFlag = 0;
+         }
+      }
+    } else if (keyCode == DOWN) {
+        if (visualFlag < 1){
+          visualFlag--;
+        }
+         else{
+          visualFlag = 3;
+        }
+    } 
+
 }
