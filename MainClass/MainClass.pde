@@ -9,7 +9,9 @@ AudioPlayer player;
 AudioMetaData meta;
 BeatDetect beat;
 int  r = 270;
+int rDef = 270;
 float rad = 100;
+float radDef = 100;
 PFont font1;
 boolean pause = false;
 
@@ -20,6 +22,8 @@ int visualFlag = 0;
 // visualization properties
 int pointSize = 4;
 int density = 5;
+float thickness = 30;
+int step = 10;
 
 void setup()
 {
@@ -138,14 +142,26 @@ void draw()
   if (visualFlag == 0){
     pointSize = 4;
     density = 5;
+    thickness = 30;
+    step = 10;
+    rDef = 270;
+    radDef = 100;
     
   }else if(visualFlag == 1){
-    pointSize = 10;
+    pointSize = 13;
     density = 1;
-  
-  }else if(visualFlag == 2){
+    thickness = 30;
+    step = 10;
+    rDef = 270;
+    radDef = 100;
   
   }else{
+    pointSize = 4;
+    density = 10;
+    thickness = 500;
+    step = 1;
+    rDef = 270;
+    radDef = 100;
   
   }
   
@@ -176,12 +192,12 @@ void draw()
     r = 310;
   }
   else {
-    rad = 100;
-    r = 270;
+    rad = radDef;
+    r = rDef;
   }
   
   ellipse(0, 0, 3*rad, 3*rad);
-  stroke(#FFFFFF, 30);
+  stroke(#FFFFFF, thickness);
   int bsize = player.bufferSize();
   
   float x, y, x2, y2;
@@ -196,7 +212,7 @@ void draw()
   beginShape();
   noFill();
   stroke(-1, 50);
-  for (int i = 0; i < bsize; i+= 10)
+  for (int i = 0; i < bsize; i+= step)
   {
     x2 = (r + player.left.get(i)*100)*cos(i*2*PI/bsize);
     y2 = (r + player.left.get(i)*100)*sin(i*2*PI/bsize);
@@ -286,22 +302,25 @@ void keyPressed() {
   if(key=='2')colorFlag = 2; //green
   if(key=='3')colorFlag = 3; //yellow
   if(key=='4')colorFlag = 4; //pink
-    if (key == CODED) {
+  if (key == CODED) {
       if (keyCode == UP) {
-        if (visualFlag < 3){
+        if (visualFlag < 2){
           visualFlag++;
         } 
          else{
            visualFlag = 0;
          }
-      }
-    } else if (keyCode == DOWN) {
-        if (visualFlag < 1){
+      } 
+  }
+  if (key == CODED) {
+      if (keyCode == DOWN){
+        if (visualFlag > 0){
           visualFlag--;
         }
          else{
-          visualFlag = 3;
+          visualFlag = 2;
         }
-    } 
-
+      }
+  }
 }
+
